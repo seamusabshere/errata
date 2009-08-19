@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'activesupport'
+require 'remote_table'
 require 'erratum'
 require 'erratum/delete'
 require 'erratum/reject'
