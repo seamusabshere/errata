@@ -1,18 +1,31 @@
-= errata
+=errata
 
-Description goes here.
+Correct strings based on remote errata files.
 
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+==Real-life usage
 
-== Copyright
+Used by data_miner (http://github.com/seamusabshere/data_miner)
+
+==Example
+
+Taken from <tt>#{GEMDIR}/test/errata_test.rb</tt>:
+
+  errata = Errata.new(:url => 'http://static.brighterplanet.com/science/data/transport/automobiles/make_fleet_years/errata.csv')
+  rover = { 'manufacturer_name' => 'foobar Austin Rover foobar' }
+  mercedes = { 'manufacturer_name' => 'MERCEDES' }
+  errata.correct!(mercedes)
+  errata.correct!(rover)
+
+Now you will have
+
+  rover['manufacturer_name']    #=> 'Rover'         (used to be 'foobar Austin Rover foobar')
+  mercedes['manufacturer_name'] #=> 'Mercedes-Benz' (used to be 'MERCEDES')
+
+==Authors
+
+* Seamus Abshere <seamus@abshere.net>
+* Andy Rossmeissl <andy@rossmeissl.net>
+
+==Copyright
 
 Copyright (c) 2009 Brighter Planet. See LICENSE for details.
