@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/seamusabshere/errata}
   s.rdoc_options = ["--charset=UTF-8", "--line-numbers", "--inline-source"]
   s.require_paths = ["lib"]
+  s.rubyforge_project = %q{errata}
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Correct strings based on remote errata files}
   s.test_files = [

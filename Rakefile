@@ -14,7 +14,7 @@ begin
     gem.require_path = "lib"
     gem.files.include %w(lib/erratum) unless gem.files.empty? # seems to fail once it's in the wild
     gem.rdoc_options << '--line-numbers' << '--inline-source'
-    # gem.rubyforge_project = "errata"
+    gem.rubyforge_project = "errata"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
