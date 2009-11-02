@@ -10,14 +10,14 @@ begin
     gem.email = "seamus@abshere.net"
     gem.homepage = "http://github.com/seamusabshere/errata"
     gem.authors = ["Seamus Abshere", "Andy Rossmeissl"]
-    %w{ activesupport seamusabshere-remote_table }.each { |name| gem.add_dependency name }
+    %w{ activesupport remote_table }.each { |name| gem.add_dependency name }
     gem.require_path = "lib"
     gem.files.include %w(lib/erratum) unless gem.files.empty? # seems to fail once it's in the wild
     gem.rdoc_options << '--line-numbers' << '--inline-source'
     # gem.rubyforge_project = "errata"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
-
+  Jeweler::GemcutterTasks.new
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
   end
