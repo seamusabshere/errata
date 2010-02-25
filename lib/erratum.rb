@@ -4,10 +4,10 @@ class Errata
     delegate :klass, :to => :errata
     
     def initialize(errata, options = {})
-      raise "you can't set this from outside" if options.has_key?(:prefix)
+      raise "you can't set this from outside" if options[:prefix].present?
       @errata = errata
       @column = options[:section]
-      @matching_method = "#{options[:condition].gsub(/[^a-z0-9]/i, '_').downcase}?".to_sym if options[:condition]
+      @matching_method = "#{options[:condition].gsub(/[^a-z0-9]/i, '_').downcase}?".to_sym if options[:condition].present?
     end
     
     def inspect
