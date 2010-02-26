@@ -11,7 +11,7 @@ begin
     gem.homepage = "http://github.com/seamusabshere/errata"
     gem.authors = ["Seamus Abshere", "Andy Rossmeissl"]
     gem.add_dependency 'activesupport', '~>2.3.4'
-    gem.add_dependency 'remote_table', '~>0.2.1'
+    gem.add_dependency 'remote_table', '~>0.2.2'
     gem.require_path = "lib"
     gem.files.include %w(lib/erratum) unless gem.files.empty? # seems to fail once it's in the wild
     gem.rdoc_options << '--line-numbers' << '--inline-source'
