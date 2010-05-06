@@ -55,8 +55,8 @@ class Errata
     def set_matching_expression(options = {})
       if options[:x].blank?
         @matching_expression = nil
-      elsif options[:x].starts_with?('/')
-        if options[:x].ends_with?('i')
+      elsif options[:x].start_with?('/')
+        if options[:x].end_with?('i')
           ci = true
           options[:x] = options[:x].chop
         else

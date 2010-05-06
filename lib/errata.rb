@@ -1,4 +1,12 @@
 require 'active_support'
+require 'active_support/version'
+%w{
+  active_support/core_ext/module/delegation
+  active_support/core_ext/hash/keys
+  active_support/core_ext/hash/slice
+}.each do |active_support_3_requirement|
+  require active_support_3_requirement
+end if ActiveSupport::VERSION::MAJOR == 3
 require 'remote_table'
 require 'erratum'
 require 'erratum/delete'
