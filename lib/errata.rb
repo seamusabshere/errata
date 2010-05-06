@@ -7,6 +7,7 @@ require 'active_support/version'
 }.each do |active_support_3_requirement|
   require active_support_3_requirement
 end if ActiveSupport::VERSION::MAJOR == 3
+require 'remote_table'
 require 'erratum'
 require 'erratum/delete'
 require 'erratum/reject'
@@ -18,12 +19,27 @@ require 'erratum/truncate'
 class Errata
   ERRATUM_TYPES = %w{delete replace simplify transform truncate}
 
-  attr_reader :responder
-  attr_reader :table
+  attr_reader :options
   
+  # Arguments
+  # * <tt>:responder</tt> (required) - normally you pass this something like Guru.new, which should respond to questions like #is_a_bentley?. If you pass a string, it will be lazily constantized and a new object initialized from it; for example, 'Guru' will lead to 'Guru'.constantize.new.
+  # * <tt>:table</tt> - takes something that acts like a RemoteTable
+  # If and only if you don't pass <tt>:table</tt>, all other options will be passed to a new RemoteTable (for example, <tt>:url</tt>, etc.)
   def initialize(options = {})
-    @responder = options[:responder]
-    @table = options[:table]
+    options.symbolize_keys!
+    @options = options
+  end
+  
+  def table
+    @_table ||= if options[:table].present?
+      options[:table]
+    else
+      RemoteTable.new options.except(:responder)
+    end
+  end
+  
+  def responder
+    @_responder ||= (options[:responder].is_a?(String) ? options[:responder].constantize.new : options[:responder])
   end
   
   def rejects?(row)

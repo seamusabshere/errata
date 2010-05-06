@@ -73,4 +73,20 @@ class ErrataTest < Test::Unit::TestCase
   should "reject rows" do
     assert @e.rejects?('carline_mfr_name' => 'AURORA CARS')
   end
+  
+  should "lazily constantize and initialize responder" do
+    e = Errata.new :table => RemoteTable.new(:url => 'http://spreadsheets.google.com/pub?key=t9WkYT39zjrStx7ruCFrZJg'),
+                   :responder => 'AutomobileVariantGuru'
+    alfa = { "carline_mfr_name"=>"ALFA ROMEO" }
+    e.correct!(alfa)
+    assert_equal 'Alfa Romeo', alfa['carline_mfr_name']
+  end
+  
+  should "pass options to RemoteTable if no :table is specified" do
+    e = Errata.new :url => 'http://spreadsheets.google.com/pub?key=t9WkYT39zjrStx7ruCFrZJg',
+                   :responder => AutomobileVariantGuru.new
+    alfa = { "carline_mfr_name"=>"ALFA ROMEO" }
+    e.correct!(alfa)
+    assert_equal 'Alfa Romeo', alfa['carline_mfr_name']
+  end
 end
