@@ -1,7 +1,7 @@
 class Errata
   class Erratum
     attr_accessor :errata, :column, :matching_method
-    delegate :klass, :to => :errata
+    delegate :responder, :to => :errata
     
     def initialize(errata, options = {})
       raise "you can't set this from outside" if options[:prefix].present?
@@ -11,7 +11,7 @@ class Errata
     end
     
     def inspect
-      "<#{self.class.name}:#{object_id} klass=#{klass.name} column=#{column} matching_method=#{matching_method}"
+      "<#{self.class.name}:#{object_id} responder=#{responder.to_s} column=#{column} matching_method=#{matching_method}"
     end
     
     def targets?(row)
@@ -47,7 +47,7 @@ class Errata
     
     def method_matches?(row)
       return true if matching_method.nil?
-      klass.send(matching_method, row)
+      responder.send(matching_method, row)
     end
     
     def set_matching_expression(options = {})
