@@ -22,8 +22,6 @@ class Errata
         end
       end
       
-      private
-      
       def matching_expression(row)
         @_matching_expressions ||= {}
         @_matching_expressions[row[second_column]] ||= /[\s\(\[\'\"]*#{Regexp.escape(row[second_column])}[\s\)\]\'\"]*/

@@ -36,8 +36,6 @@ class Errata
       :corrected
     end
 
-    private
-    
     def expression_matches?(row)
       return true if matching_expression.blank? or column.blank?
       if matching_expression.is_a?(Regexp)

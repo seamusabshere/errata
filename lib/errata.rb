@@ -39,8 +39,6 @@ class Errata
     (rejections + corrections).map { |erratum| erratum.matching_method }.compact.uniq
   end
   
-  private
-  
   def rejections
     @_rejections ||= @_table.rows.map { |hash| hash.symbolize_keys!; ::Errata::Erratum::Reject.new(self, hash) if hash[:action] == 'reject' }.compact
   end
