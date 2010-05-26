@@ -11,7 +11,7 @@ class Errata
     end
     
     def matching_methods
-      @_matching_methods ||= options[:condition].split(/\s+;\s+/).map do |method_id|
+      @_matching_methods ||= options[:condition].split(/\s*;\s*/).map do |method_id|
         "#{method_id.strip.gsub(/[^a-z0-9]/i, '_').downcase}?"
       end
     end
