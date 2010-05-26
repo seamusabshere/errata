@@ -33,10 +33,6 @@ class AutomobileVariantGuru
     row.slice('MFR', 'Manufacturer', 'carline_mfr_name').any? { |k, v| v.upcase == 'FORD' }
   end
 
-  def is_a_rolls_royce_and_model_contains_bentley?(row)
-    is_a_rolls_royce?(row) and model_contains_bentley?(row)
-  end
-
   def is_a_bentley?(row)
     row.slice('MFR', 'Manufacturer', 'carline_mfr_name').any? { |k, v| v.upcase == 'BENTLEY' }
   end
@@ -88,5 +84,11 @@ class ErrataTest < Test::Unit::TestCase
     alfa = { "carline_mfr_name"=>"ALFA ROMEO" }
     e.correct!(alfa)
     assert_equal 'Alfa Romeo', alfa['carline_mfr_name']
+  end
+  
+  should "try multiple conditions" do
+    bentley = { 'carline_mfr_name' => 'ROLLS-ROYCE BENTLEY', "carline name" => 'Super Bentley' }
+    @e.correct!(bentley)
+    assert_equal 'Bentley', bentley['carline_mfr_name']
   end
 end

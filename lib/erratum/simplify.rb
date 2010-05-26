@@ -13,7 +13,7 @@ class Errata
       end
       
       def targets?(row)
-        !row[column].blank? and !row[second_column].blank? and method_matches?(row) and matching_expression(row).match(row[column])
+        !row[column].blank? and !row[second_column].blank? and conditions_match?(row) and matching_expression(row).match(row[column])
       end
       
       def correct!(row)

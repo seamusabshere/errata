@@ -50,11 +50,7 @@ class Errata
     corrections.each { |erratum| erratum.correct!(row) }
     nil
   end
-  
-  def implied_matching_methods
-    (rejections + corrections).map { |erratum| erratum.matching_method }.compact.uniq
-  end
-  
+    
   def rejections
     @_rejections ||= table.rows.map { |hash| hash.symbolize_keys!; ::Errata::Erratum::Reject.new(self, hash) if hash[:action] == 'reject' }.compact
   end

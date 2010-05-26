@@ -1,21 +1,27 @@
 class Errata
   class Erratum
-    attr_accessor :errata, :column, :matching_method
+    attr_accessor :errata, :column, :options
     delegate :responder, :to => :errata
     
     def initialize(errata, options = {})
       raise "you can't set this from outside" if options[:prefix].present?
       @errata = errata
       @column = options[:section]
-      @matching_method = "#{options[:condition].gsub(/[^a-z0-9]/i, '_').downcase}?".to_sym if options[:condition].present?
+      @options = options
+    end
+    
+    def matching_methods
+      @_matching_methods ||= options[:condition].split(/\s+;\s+/).map do |method_id|
+        "#{method_id.strip.gsub(/[^a-z0-9]/i, '_').downcase}?"
+      end
     end
     
     def inspect
-      "<#{self.class.name}:#{object_id} responder=#{responder.to_s} column=#{column} matching_method=#{matching_method}"
+      "<#{self.class.name}:#{object_id} responder=#{responder.to_s} column=#{column} matching_methods=#{matching_methods.inspect}"
     end
     
     def targets?(row)
-      !!(method_matches?(row) and expression_matches?(row))
+      !!(conditions_match?(row) and expression_matches?(row))
     end
     
     def correct!(row, &block)
@@ -45,9 +51,8 @@ class Errata
       end
     end
     
-    def method_matches?(row)
-      return true if matching_method.nil?
-      responder.send(matching_method, row)
+    def conditions_match?(row)
+      matching_methods.all? { |method_id| responder.send method_id, row }
     end
     
     def set_matching_expression(options = {})
