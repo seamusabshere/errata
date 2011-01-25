@@ -38,8 +38,7 @@ class Errata
   end
   
   def errata
-    return @errata if @errata.is_a? ::Array
-    (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).map do |erratum_description|
+    @errata ||= (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).map do |erratum_description|
       next unless ERRATUM_TYPES.include? erratum_description['action']
       "::Errata::Erratum::#{erratum_description['action'].camelcase}".constantize.new self, erratum_description
     end.compact
