@@ -8,13 +8,13 @@ Used by data_miner (http://github.com/seamusabshere/data_miner)
 
 ==Example
 
-Taken from <tt>#{GEMDIR}/test/errata_test.rb</tt>:
+Taken from <tt>#{GEMDIR}/test/test_old_syntax.rb</tt>:
 
   errata = Errata.new(:url => 'http://static.brighterplanet.com/science/data/transport/automobiles/make_fleet_years/errata.csv')
   rover = { 'manufacturer_name' => 'foobar Austin Rover foobar' }
   mercedes = { 'manufacturer_name' => 'MERCEDES' }
-  errata.correct!(mercedes)
-  errata.correct!(rover)
+  errata.correct! mercedes
+  errata.correct! rover
 
 Now you will have
 
@@ -28,4 +28,4 @@ Now you will have
 
 ==Copyright
 
-Copyright (c) 2009 Brighter Planet. See LICENSE for details.
+Copyright (c) 2011 Brighter Planet. See LICENSE for details.

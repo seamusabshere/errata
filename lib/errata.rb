@@ -1,45 +1,31 @@
 require 'active_support'
 require 'active_support/version'
 %w{
-  active_support/core_ext/module/delegation
   active_support/core_ext/hash/keys
   active_support/core_ext/hash/slice
 }.each do |active_support_3_requirement|
   require active_support_3_requirement
-end if ActiveSupport::VERSION::MAJOR == 3
+end if ::ActiveSupport::VERSION::MAJOR == 3
 require 'remote_table'
-require 'erratum'
-require 'erratum/delete'
-require 'erratum/reject'
-require 'erratum/replace'
-require 'erratum/simplify'
-require 'erratum/transform'
-require 'erratum/truncate'
 
 class Errata
-  ERRATUM_TYPES = %w{delete replace simplify transform truncate}
+  autoload :Erratum, 'errata/erratum'
+  
+  ERRATUM_TYPES = %w{delete replace simplify transform truncate reject}
 
   attr_reader :options
   
   # Arguments
-  # * <tt>:responder</tt> (required) - normally you pass this something like Guru.new, which should respond to questions like #is_a_bentley?. If you pass a string, it will be lazily constantized and a new object initialized from it; for example, 'Guru' will lead to 'Guru'.constantize.new.
-  # * <tt>:table</tt> - takes something that acts like a RemoteTable
-  # If and only if you don't pass <tt>:table</tt>, all other options will be passed to a new RemoteTable (for example, <tt>:url</tt>, etc.)
+  # * <tt>'responder'</tt> (required) - normally you pass this something like Guru.new, which should respond to questions like #is_a_bentley?. If you pass a string, it will be lazily constantized and a new object initialized from it; for example, 'Guru' will lead to 'Guru'.constantize.new.
+  # * <tt>'table'</tt> - takes something that acts like a RemoteTable
+  # If and only if you don't pass <tt>'table'</tt>, all other options will be passed to a new RemoteTable (for example, <tt>'url'</tt>, etc.)
   def initialize(options = {})
-    options.symbolize_keys!
-    @options = options
-  end
-  
-  def table
-    @_table ||= if options[:table].present?
-      options[:table]
-    else
-      RemoteTable.new options.except(:responder)
-    end
+    @options = options.dup
+    @options.stringify_keys!
   end
   
   def responder
-    @_responder ||= (options[:responder].is_a?(String) ? options[:responder].constantize.new : options[:responder])
+    options['responder'].is_a?(::String) ? options['responder'].constantize.new : options['responder']
   end
   
   def rejects?(row)
@@ -50,12 +36,20 @@ class Errata
     corrections.each { |erratum| erratum.correct!(row) }
     nil
   end
-    
+  
+  def errata
+    return @errata if @errata.is_a? ::Array
+    (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).map do |erratum_description|
+      next unless ERRATUM_TYPES.include? erratum_description['action']
+      "::Errata::Erratum::#{erratum_description['action'].camelcase}".constantize.new self, erratum_description
+    end.compact
+  end
+  
   def rejections
-    @_rejections ||= table.rows.map { |hash| hash.symbolize_keys!; ::Errata::Erratum::Reject.new(self, hash) if hash[:action] == 'reject' }.compact
+    errata.select { |erratum| erratum.is_a? ::Errata::Erratum::Reject }
   end
   
   def corrections
-    @_corrections ||= table.rows.map { |hash| hash.symbolize_keys!; "::Errata::Erratum::#{hash[:action].camelcase}".constantize.new(self, hash) if ERRATUM_TYPES.include?(hash[:action]) }.compact
+    errata.select { |erratum| not erratum.is_a? ::Errata::Erratum::Reject }
   end
 end

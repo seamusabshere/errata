@@ -1,4 +1,4 @@
-require 'test_helper'
+require 'helper'
 
 class AutomobileVariantGuru
   def transmission_is_blank?(row)
@@ -54,7 +54,7 @@ class AutomobileVariantGuru
   end
 end
 
-class ErrataTest < Test::Unit::TestCase
+class TestOldSyntax < Test::Unit::TestCase
   def setup
     @e = Errata.new :table => RemoteTable.new(:url => 'http://spreadsheets.google.com/pub?key=t9WkYT39zjrStx7ruCFrZJg'),
                     :responder => AutomobileVariantGuru.new
