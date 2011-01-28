@@ -23,5 +23,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'remote_table', '~>1'
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'shoulda'
-  s.add_development_dependency 'ruby-debug'
 end
