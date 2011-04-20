@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   
   s.add_dependency 'activesupport', '>=2.3.4'
   s.add_dependency 'remote_table', '>=1.1.7'
+  s.add_dependency 'to_regexp', '>= 0.0.2'
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'shoulda'
 end

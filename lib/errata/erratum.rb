@@ -1,3 +1,5 @@
+require 'to_regexp'
+
 class Errata
   class Erratum
     autoload :Delete, 'errata/erratum/delete'
@@ -51,16 +53,10 @@ class Errata
       @matching_expression = []
       @matching_expression[0] = if options['x'].blank?
         nil
-      elsif options['x'].start_with? '/'
-        if options['x'].end_with? 'i'
-          ci = true
-          expr = options['x'].chop
-        else
-          ci = false
-          expr = options['x'].dup
+      elsif (options['x'].start_with?('/') and options['x'].end_with?('/')) or options['x'].start_with?('%r{')
+        if as_regexp = options['x'].as_regexp
+          ::Regexp.new(*as_regexp)
         end
-        expr.gsub! /\A\/|\/\z/, ''
-        ::Regexp.new expr, ci
       elsif /\Aabbr\((.*)\)\z/.match options['x']
         abbr = $1.split(/(\w\??)/).reject { |a| a == '' }.join('\.?\s?') + '\.?([^\w\.]|\z)'
         expr = '(\A|\s)' + abbr
