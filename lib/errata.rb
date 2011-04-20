@@ -38,10 +38,12 @@ class Errata
   end
   
   def errata
-    @errata ||= (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).map do |erratum_description|
-      next unless ERRATUM_TYPES.include? erratum_description['action']
-      "::Errata::Erratum::#{erratum_description['action'].camelcase}".constantize.new self, erratum_description
-    end.compact
+    @errata ||= (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).inject([]) do |memo, erratum_description|
+      if ERRATUM_TYPES.include? erratum_description['action']
+        memo.push "::Errata::Erratum::#{erratum_description['action'].camelcase}".constantize.new self, erratum_description
+      end
+      memo
+    end
   end
   
   def rejections
