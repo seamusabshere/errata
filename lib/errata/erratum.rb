@@ -33,12 +33,6 @@ class Errata
       !!(conditions_match?(row) and expression_matches?(row))
     end
     
-    def correct!(row, &blk)
-      return :skipped unless targets? row
-      yield if block_given?
-      :corrected
-    end
-
     def expression_matches?(row)
       return true if matching_expression.blank? or section.blank?
       if matching_expression.is_a? ::Regexp

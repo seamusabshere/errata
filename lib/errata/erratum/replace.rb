@@ -6,7 +6,7 @@ class Errata
       end
 
       def correct!(row)
-        super(row) do
+        if targets? row
           if matching_expression.blank?
             row[section] = correction.dup
           else

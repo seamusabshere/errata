@@ -6,7 +6,7 @@ class Errata
       end
 
       def correct!(row)
-        super(row) do
+        if targets? row
           row[section] = necessary_and_sufficient_prefix.dup
         end
       end

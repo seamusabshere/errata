@@ -7,7 +7,7 @@ class Errata
       end
             
       def correct!(row)
-        super(row) do
+        if targets? row
           row[section].gsub! matching_expression, backfill
         end
       end

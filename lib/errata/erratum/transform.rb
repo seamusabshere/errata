@@ -9,7 +9,7 @@ class Errata
       end
       
       def correct!(row)
-        super(row) do
+        if targets? row
           row[section].gsub!(matching_expression) { |match| match.send string_method }
         end
       end
