@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   
   s.add_dependency 'activesupport', '>=2.3.4'
-  s.add_dependency 'remote_table', '~>1'
+  s.add_dependency 'remote_table', '>=1.1.7'
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'shoulda'
 end

@@ -2,6 +2,10 @@
 
 Correct strings based on remote errata files.
 
+==UTF-8
+
+Assumes all input strings are UTF-8. Otherwise there can be problems with Ruby 1.9 and Regexp::FIXEDENCODING. Specifically, ASCII-8BIT regexps might be applied to UTF-8 strings (or vice-versa), resulting in Encoding::CompatibilityError.
+
 ==Real-life usage
 
 Used by data_miner (http://github.com/seamusabshere/data_miner)
