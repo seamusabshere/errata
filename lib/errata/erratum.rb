@@ -53,9 +53,9 @@ class Errata
     end
         
     def matching_expression
-      return @_matching_expression[0] if @_matching_expression.is_a? ::Array
-      @_matching_expression = []
-      @_matching_expression[0] = if options['x'].blank?
+      return @matching_expression[0] if @matching_expression.is_a? ::Array
+      @matching_expression = []
+      @matching_expression[0] = if options['x'].blank?
         nil
       elsif options['x'].start_with? '/'
         if options['x'].end_with? 'i'
@@ -77,7 +77,7 @@ class Errata
       else
         options['x']
       end
-      @_matching_expression[0]
+      @matching_expression[0]
     end
   end
 end
