@@ -7,9 +7,6 @@ end
 Bundler.setup
 require 'test/unit'
 require 'shoulda'
-unless RUBY_VERSION >= '1.9'
-  require 'ruby-debug'
-end
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'errata'
