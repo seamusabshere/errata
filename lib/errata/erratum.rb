@@ -37,9 +37,10 @@ class Errata
     
     def expression_matches?(row)
       return true if matching_expression.blank? or section.blank?
-      if matching_expression.is_a? ::Regexp
+      case matching_expression
+      when ::Regexp
         matching_expression.match row[section].to_s
-      else
+      when ::String
         row[section].to_s.include? matching_expression
       end
     end
@@ -53,10 +54,8 @@ class Errata
       @matching_expression = []
       @matching_expression[0] = if options['x'].blank?
         nil
-      elsif (options['x'].start_with?('/') and options['x'].end_with?('/')) or options['x'].start_with?('%r{')
-        if as_regexp = options['x'].as_regexp
-          ::Regexp.new(*as_regexp)
-        end
+      elsif (options['x'].start_with?('/') or options['x'].start_with?('%r{')) and as_regexp = options['x'].as_regexp
+        ::Regexp.new(*as_regexp)
       elsif /\Aabbr\((.*)\)\z/.match options['x']
         abbr = $1.split(/(\w\??)/).reject { |a| a == '' }.join('\.?\s?') + '\.?([^\w\.]|\z)'
         expr = '(\A|\s)' + abbr
