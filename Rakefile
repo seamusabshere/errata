@@ -9,17 +9,12 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-begin
-  require 'rake/rdoctask'
-  Rake::RDocTask.new do |rdoc|
-    rdoc.rdoc_dir = 'rdoc'
-    rdoc.title = 'errata'
-    rdoc.options << '--line-numbers' << '--inline-source'
-    rdoc.rdoc_files.include('README*')
-    rdoc.rdoc_files.include('lib/**/*.rb')
-  end
-rescue LoadError
-   puts "Rdoc is not available"
+# rake yard
+require 'yard'
+require 'yard/rake/yardoc_task'
+YARD::Rake::YardocTask.new do |t|
+  t.files   = ['lib/**/*.rb', 'README.md']
+  t.options = ['--readme', 'README.md']
 end
 
 task :default => :test
