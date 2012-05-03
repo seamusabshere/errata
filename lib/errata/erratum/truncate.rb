@@ -1,8 +1,11 @@
 class Errata
   class Erratum
     class Truncate < Erratum
-      def necessary_and_sufficient_prefix
-        options['x']
+      attr_reader :necessary_and_sufficient_prefix
+
+      def initialize(responder, options = {})
+        super
+        @necessary_and_sufficient_prefix = options[:x]
       end
 
       def correct!(row)

@@ -1,14 +1,18 @@
 require 'rubygems'
-require 'bundler'
+require 'bundler/setup'
+
+if Bundler.definition.specs['ruby-debug19'].first or Bundler.definition.specs['ruby-debug'].first
+  require 'ruby-debug'
+end
+
+require 'minitest/spec'
+require 'minitest/autorun'
+require 'minitest/reporters'
+MiniTest::Unit.runner = MiniTest::SuiteRunner.new
+MiniTest::Unit.runner.reporters << MiniTest::Reporters::SpecReporter.new
+
 unless RUBY_VERSION >= '1.9'
-  gem 'fastercsv'
   require 'fastercsv'
 end
-Bundler.setup
-require 'test/unit'
-require 'shoulda'
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
 require 'errata'
-class Test::Unit::TestCase
-end

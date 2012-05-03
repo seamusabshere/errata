@@ -1,8 +1,11 @@
 class Errata
   class Erratum
     class Simplify < Erratum
-      def second_section
-        options['x']
+      attr_reader :second_section
+
+      def initialize(responder, options = {})
+        super
+        @second_section = options[:x]
       end
 
       def targets?(row)
@@ -15,6 +18,8 @@ class Errata
         end
       end
       
+      private
+
       def special_matcher(row)
         /[\s\(\[\'\"]*#{::Regexp.escape(row[second_section])}[\s\)\]\'\"]*/
       end

@@ -1,33 +1,47 @@
+require 'thread'
+
 require 'active_support'
 require 'active_support/version'
-%w{
-  active_support/core_ext/hash/keys
-  active_support/core_ext/hash/slice
-}.each do |active_support_3_requirement|
-  require active_support_3_requirement
-end if ::ActiveSupport::VERSION::MAJOR == 3
+if ::ActiveSupport::VERSION::MAJOR >= 3
+  require 'active_support/core_ext'
+end
 require 'remote_table'
 
-class Errata
-  autoload :Erratum, 'errata/erratum'
-  
-  ERRATUM_TYPES = %w{delete replace simplify transform truncate reject}
+require 'errata/erratum'
 
-  attr_reader :options
-  
+class Errata
+  CORRECTIONS = %w{delete replace simplify transform truncate reject}
+
+  attr_reader :lazy_load_table_options
+  attr_reader :lazy_load_responder_class_name
+
   # Arguments
-  # * <tt>'responder'</tt> (required) - normally you pass this something like Guru.new, which should respond to questions like #is_a_bentley?. If you pass a string, it will be lazily constantized and a new object initialized from it; for example, 'Guru' will lead to 'Guru'.constantize.new.
-  # * <tt>'table'</tt> - takes something that acts like a RemoteTable
-  # If and only if you don't pass <tt>'table'</tt>, all other options will be passed to a new RemoteTable (for example, <tt>'url'</tt>, etc.)
+  # * <tt>:responder</tt> (required) - normally you pass this something like Guru.new, which should respond to questions like #is_a_bentley?. If you pass a string, it will be lazily constantized and a new object initialized from it; for example, 'Guru' will lead to 'Guru'.constantize.new.
+  # * <tt>:table</tt> - takes something that acts like a RemoteTable
+  # If and only if you don't pass <tt>:table</tt>, all other options will be passed to a new RemoteTable (for example, <tt>:url</tt>, etc.)
   def initialize(options = {})
-    @options = options.dup
-    @options.stringify_keys!
+    options = options.symbolize_keys
+
+    responder = options.delete :responder
+    raise "[errata] :responder is required" unless responder
+    if responder.is_a?(::String)
+      @lazy_load_responder_mutex = ::Mutex.new
+      @lazy_load_responder_class_name = responder
+    else
+      ::Kernel.warn %{[errata] Passing an object as :responder is deprecated. It's recommended to pass a class name instead, which will be constantized and instantiated with no arguments.}
+      @responder = responder
+    end
+
+    if table = options.delete(:table)
+      ::Kernel.warn %{[errata] Passing :table is deprecated. It's recommended to pass table options instead.}
+      @table = table
+    else
+      @lazy_load_table_options = options
+    end
+
+    @set_rejections_and_corrections_mutex = ::Mutex.new
   end
-  
-  def responder
-    options['responder'].is_a?(::String) ? options['responder'].constantize.new : options['responder']
-  end
-  
+    
   def rejects?(row)
     rejections.any? { |erratum| erratum.targets?(row) }
   end
@@ -36,21 +50,53 @@ class Errata
     corrections.each { |erratum| erratum.correct!(row) }
     nil
   end
-  
-  def errata
-    @errata ||= (options['table'] ? options['table'] : ::RemoteTable.new(options.except('responder'))).inject([]) do |memo, erratum_description|
-      if ERRATUM_TYPES.include? erratum_description['action']
-        memo.push "::Errata::Erratum::#{erratum_description['action'].camelcase}".constantize.new self, erratum_description
+
+  def responder
+    @responder || @lazy_load_responder_mutex.synchronize do
+      @responder ||= lazy_load_responder_class_name.constantize.new
+    end
+  end
+
+  private
+
+  def set_rejections_and_corrections!
+    return if @set_rejections_and_corrections == true
+    @set_rejections_and_corrections_mutex.synchronize do
+      return if @set_rejections_and_corrections == true
+
+      if @table
+        table = @table
+        @table = nil # won't need this again
+      else
+        table = ::RemoteTable.new lazy_load_table_options
       end
-      memo
+
+      rejections = []
+      corrections = []
+
+      table.each do |erratum_initializer|
+        erratum_initializer = erratum_initializer.symbolize_keys
+        action = erratum_initializer[:action].downcase
+        if action == 'reject'
+          rejections << Erratum::Reject.new(responder, erratum_initializer)
+        elsif CORRECTIONS.include?(action)
+          corrections << Erratum.const_get(action.camelcase).new(responder, erratum_initializer)
+        end
+      end
+
+      @rejections = rejections
+      @corrections = corrections
+      @set_rejections_and_corrections = true
     end
   end
   
   def rejections
-    errata.select { |erratum| erratum.is_a? ::Errata::Erratum::Reject }
+    set_rejections_and_corrections!
+    @rejections
   end
   
   def corrections
-    errata.select { |erratum| not erratum.is_a? ::Errata::Erratum::Reject }
+    set_rejections_and_corrections!
+    @corrections
   end
 end

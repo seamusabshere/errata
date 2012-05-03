@@ -1,11 +1,9 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "errata/version"
+require File.expand_path("../lib/errata/version", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "errata"
   s.version     = Errata::VERSION
-  s.platform    = Gem::Platform::RUBY
   s.authors     = ["Seamus Abshere", "Andy Rossmeissl"]
   s.email       = ["seamus@abshere.net"]
   s.homepage    = "https://github.com/seamusabshere/errata"
@@ -22,6 +20,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', '>=2.3.4'
   s.add_dependency 'remote_table', '>=1.1.7'
   s.add_dependency 'to_regexp', '>= 0.0.2'
-  s.add_development_dependency 'test-unit'
-  s.add_development_dependency 'shoulda'
 end

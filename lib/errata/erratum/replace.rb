@@ -1,8 +1,15 @@
 class Errata
   class Erratum
     class Replace < Erratum
-      def correction
-        @correction ||= /\Aabbr\((.*)\)\z/.match(options['x']) ? '\1' + options['y'].to_s + '\2' : options['y'].to_s
+      attr_reader :correction
+
+      def initialize(responder, options = {})
+        super
+        @correction = if abbr?
+          '\1' + options[:y].to_s + '\2'
+        else
+          options[:y].to_s
+        end
       end
 
       def correct!(row)

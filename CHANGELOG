@@ -1,0 +1,13 @@
+1.1.0 / 2012-05-03
+
+* Breaking changes
+
+  * Errata#options is no longer available for introspection. Use Errata#lazy_load_table_options and Errata#responder if that helps.
+
+* Enhancements
+
+  * Modernize Rakefile and test helper
+  * Got rid of autoload and made thread-safe in general
+  * Convert to minitest
+  * Strictly correct lazy-loading
+  * Added warnings for deprecated usage styles.

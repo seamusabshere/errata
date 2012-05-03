@@ -1,36 +1,50 @@
 require 'to_regexp'
 
+require 'errata/erratum/delete'
+require 'errata/erratum/reject'
+require 'errata/erratum/replace'
+require 'errata/erratum/simplify'
+require 'errata/erratum/transform'
+require 'errata/erratum/truncate'
+
 class Errata
   class Erratum
-    autoload :Delete, 'errata/erratum/delete'
-    autoload :Reject, 'errata/erratum/reject'
-    autoload :Replace, 'errata/erratum/replace'
-    autoload :Simplify, 'errata/erratum/simplify'
-    autoload :Transform, 'errata/erratum/transform'
-    autoload :Truncate, 'errata/erratum/truncate'
+    SEMICOLON_DELIMITER = /\s*;\s*/
+    SPECIAL_ABBR = /\Aabbr\((.*)\)\z/
+    REJECT_ACTIONS = %w{reject truncate}
+
+    attr_reader :responder
+    attr_reader :section
+    attr_reader :matching_methods
+    attr_reader :matching_expression
     
-    attr_reader :errata
-    attr_reader :options
-    
-    def initialize(errata, options = {})
-      @errata = errata
-      @options = options.dup
-    end
-    
-    def section
-      options['section']
-    end
-    
-    def responder
-      errata.responder
-    end
-    
-    def matching_methods
-      @matching_methods ||= options['condition'].split(/\s*;\s*/).map do |method_id|
-        "#{method_id.strip.gsub(/[^a-z0-9]/i, '_').downcase}?"
+    def initialize(responder, options = {})
+      @responder = responder
+      @section = options[:section]
+      @matching_methods = options[:condition].split(SEMICOLON_DELIMITER).map do |method_id|
+        method_id.strip.gsub(/\W/, '_').downcase + '?'
+      end
+      @matching_expression = if options[:x].blank?
+        nil
+      elsif (options[:x].start_with?('/') or options[:x].start_with?('%r{')) and as_regexp = options[:x].as_regexp
+        ::Regexp.new(*as_regexp)
+      elsif SPECIAL_ABBR.match options[:x]
+        @abbr_query = true
+        abbr = $1.split(/(\w\??)/).reject { |a| a == '' }.join('\.?\s?') + '\.?([^\w\.]|\z)'
+        expr = '(\A|\s)' + abbr
+        ::Regexp.new expr, true
+      elsif REJECT_ACTIONS.include? options[:action]
+        expr = '\A\s*' + ::Regexp.escape(options[:x])
+        ::Regexp.new expr, true
+      else
+        options[:x]
       end
     end
-        
+
+    def abbr?
+      @abbr_query == true
+    end
+    
     def targets?(row)
       !!(conditions_match?(row) and expression_matches?(row))
     end
@@ -47,26 +61,6 @@ class Errata
     
     def conditions_match?(row)
       matching_methods.all? { |method_id| responder.send method_id, row }
-    end
-        
-    def matching_expression
-      return @matching_expression[0] if @matching_expression.is_a? ::Array
-      @matching_expression = []
-      @matching_expression[0] = if options['x'].blank?
-        nil
-      elsif (options['x'].start_with?('/') or options['x'].start_with?('%r{')) and as_regexp = options['x'].as_regexp
-        ::Regexp.new(*as_regexp)
-      elsif /\Aabbr\((.*)\)\z/.match options['x']
-        abbr = $1.split(/(\w\??)/).reject { |a| a == '' }.join('\.?\s?') + '\.?([^\w\.]|\z)'
-        expr = '(\A|\s)' + abbr
-        ::Regexp.new expr, true
-      elsif %w{reject truncate}.include? options['action']
-        expr = '\A\s*' + ::Regexp.escape(options['x'])
-        ::Regexp.new expr, true
-      else
-        options['x']
-      end
-      @matching_expression[0]
     end
   end
 end

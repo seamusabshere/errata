@@ -1,9 +1,16 @@
 class Errata
   class Erratum
     class Delete < Erratum
-      def backfill
+      attr_reader :backfill
+
+      def initialize(responder, options = {})
+        super
         # otherwise abbr(X) will kill the characters before and after the match
-        @backfill ||= /\Aabbr\((.*)\)\z/.match(options['x']) ? '\1\2' : ''
+        @backfill = if abbr?
+          '\1\2'
+        else
+          ''
+        end
       end
             
       def correct!(row)
