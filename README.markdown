@@ -1,8 +1,36 @@
 # errata
 
-Correct strings based on remote errata files.
+Define an errata in table format (CSV) and then apply it to an arbitrary source. Inspired by RFC Errata, lets you keep your own errata in a transparent way.
 
-# Example
+Tested in MRI 1.8.7+, MRI 1.9.2+, and JRuby 1.6.7+. Thread safe.
+
+## Real-world usage
+
+<p><a href="http://brighterplanet.com"><img src="https://s3.amazonaws.com/static.brighterplanet.com/assets/logos/flush-left/inline/green/rasterized/brighter_planet-160-transparent.png" alt="Brighter Planet logo"/></a></p>
+
+We use `errata` for [data science at Brighter Planet](http://brighterplanet.com/research) and in production at
+
+* [Brighter Planet's reference data web service](http://data.brighterplanet.com)
+* [Brighter Planet's impact estimate web service](http://impact.brighterplanet.com)
+
+The killer combination:
+
+1. [`active_record_inline_schema`](https://github.com/seamusabshere/active_record_inline_schema) - define table structure
+2. [`remote_table`](https://github.com/seamusabshere/remote_table) - download data and parse it
+3. [`errata`](https://github.com/seamusabshere/errata) (this library!) - apply corrections in a transparent way
+4. [`data_miner`](https://github.com/seamusabshere/remote_table) - import data idempotently
+
+## Inspiration
+
+There's a process for reporting errata on RFC:
+
+* [RFC Errata](http://www.rfc-editor.org/errata.php)
+* [Status and Type Descriptions for RFC Errata](http://www.rfc-editor.org/status_type_desc.html)
+* [How to report errata](http://www.rfc-editor.org/how_to_report.html)
+
+<p><a href="http://www.rfc-editor.org"><img src="https://raw.github.com/seamusabshere/errata/master/rfc-editor.png" alt="screenshot of the RFC Editor" /></a></p>
+
+## Example
 
 Every errata has a table structure based on the [IETF RFC Editor's "How to Report Errata"](http://www.rfc-editor.org/how_to_report.html).
 
@@ -167,15 +195,44 @@ And then used
 
 Assumes all input strings are UTF-8. Otherwise there can be problems with Ruby 1.9 and Regexp::FIXEDENCODING. Specifically, ASCII-8BIT regexps might be applied to UTF-8 strings (or vice-versa), resulting in Encoding::CompatibilityError.
 
-## Real-life usage
+## More advanced usage
 
-Used by [data_miner](http://github.com/seamusabshere/data_miner)
+The [`earth` library](https://github.com/brighterplanet/earth) has dozens of real-life examples showing errata in action:
+
+<table>
+  <tr>
+    <th>Model</th>
+    <th>Reference</th>
+    <th>Errata file</th>
+  </tr>
+  <tr>
+    <td><a href="http://data.brighterplanet.com/countries">Country</a></td>
+    <td><a href="https://github.com/brighterplanet/earth/blob/master/lib/earth/locality/country/data_miner.rb">data_miner.rb</a></td>
+    <td><a href="https://raw.github.com/brighterplanet/earth/master/errata/country/wri_errata.csv">wri_errata.csv</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://data.brighterplanet.com/aircraft">Aircraft</a></td>
+    <td><a href="https://github.com/brighterplanet/earth/blob/master/lib/earth/air/aircraft/data_miner.rb">data_miner.rb</a></td>
+    <td><a href="https://raw.github.com/brighterplanet/earth/master/errata/aircraft/faa_errata.csv">faa_errata.csv</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://data.brighterplanet.com/airports">Airports</a></td>
+    <td><a href="https://github.com/brighterplanet/earth/blob/master/lib/earth/air/airport/data_miner.rb">data_miner.rb</a></td>
+    <td><a href="https://raw.github.com/brighterplanet/earth/master/errata/airport/openflights_errata.csv">openflights_errata.csv</a></td>
+  </tr>
+  <tr>
+    <td><a href="http://data.brighterplanet.com/automobile_make_model_year_variants">Automobile model variants</a></td>
+    <td><a href="https://github.com/brighterplanet/earth/blob/master/lib/earth/automobile/automobile_make_model_year_variant/data_miner.rb">data_miner.rb</a></td>
+    <td><a href="https://raw.github.com/brighterplanet/earth/master/errata/automobile_make_model_year_variant/feg_errata.csv">feg_errata.csv</a></td>
+  </tr>
+</table>
 
 ## Authors
 
 * Seamus Abshere <seamus@abshere.net>
 * Andy Rossmeissl <andy@rossmeissl.net>
+* Ian Hough <ijhough@gmail.com>
 
 ## Copyright
 
-Copyright (c) 2011 Brighter Planet. See LICENSE for details.
+Copyright (c) 2012 Brighter Planet. See LICENSE for details.
