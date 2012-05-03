@@ -28,7 +28,7 @@ There's a process for reporting errata on RFC:
 * [Status and Type Descriptions for RFC Errata](http://www.rfc-editor.org/status_type_desc.html)
 * [How to report errata](http://www.rfc-editor.org/how_to_report.html)
 
-<p><a href="http://www.rfc-editor.org"><img src="https://raw.github.com/seamusabshere/errata/master/rfc-editor.png" alt="screenshot of the RFC Editor" /></a></p>
+<p><a href="http://www.rfc-editor.org"><img src="https://github.com/seamusabshere/errata/raw/master/rfc_editor.png" alt="screenshot of the RFC Editor" /></a></p>
 
 ## Example
 
