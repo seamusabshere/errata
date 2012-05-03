@@ -6,6 +6,7 @@
 
 * Enhancements
 
+  * Tested on MRI 1.8, MRI 1.9, and JRuby 1.6.7+
   * Modernize Rakefile and test helper
   * Got rid of autoload and made thread-safe in general
   * Convert to minitest
