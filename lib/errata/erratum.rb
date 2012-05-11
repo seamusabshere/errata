@@ -24,6 +24,9 @@ class Errata
       @matching_methods = options[:condition].split(SEMICOLON_DELIMITER).map do |method_id|
         method_id.strip.gsub(/\W/, '_').downcase + '?'
       end
+      if @matching_methods.any? and @responder.nil?
+        raise ::ArgumentError, %{[errata] Conditions like #{@matching_methods.first.inspect} used, but no :responder defined}
+      end
       @matching_expression = if options[:x].blank?
         nil
       elsif (options[:x].start_with?('/') or options[:x].start_with?('%r{')) and as_regexp = options[:x].as_regexp

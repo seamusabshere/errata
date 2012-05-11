@@ -23,13 +23,14 @@ class Errata
     options = options.symbolize_keys
 
     responder = options.delete :responder
-    raise "[errata] :responder is required" unless responder
     if responder.is_a?(::String)
       @lazy_load_responder_mutex = ::Mutex.new
       @lazy_load_responder_class_name = responder
-    else
+    elsif responder
       ::Kernel.warn %{[errata] Passing an object as :responder is deprecated. It's recommended to pass a class name instead, which will be constantized and instantiated with no arguments.}
       @responder = responder
+    else
+      @no_responder = true
     end
 
     if table = options.delete(:table)
@@ -52,6 +53,7 @@ class Errata
   end
 
   def responder
+    return if @no_responder == true
     @responder || @lazy_load_responder_mutex.synchronize do
       @responder ||= lazy_load_responder_class_name.constantize.new
     end

@@ -1,3 +1,9 @@
+1.1.1 / 2012-05-11
+
+* Enhancements
+
+  * Don't require a :responder if there are no conditions
+
 1.1.0 / 2012-05-03
 
 * Breaking changes
