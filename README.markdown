@@ -4,22 +4,6 @@ Define an errata in table format (CSV) and then apply it to an arbitrary source.
 
 Tested in MRI 1.8.7+, MRI 1.9.2+, and JRuby 1.6.7+. Thread safe.
 
-## Real-world usage
-
-<p><a href="http://brighterplanet.com"><img src="https://s3.amazonaws.com/static.brighterplanet.com/assets/logos/flush-left/inline/green/rasterized/brighter_planet-160-transparent.png" alt="Brighter Planet logo"/></a></p>
-
-We use `errata` for [data science at Brighter Planet](http://brighterplanet.com/research) and in production at
-
-* [Brighter Planet's reference data web service](http://data.brighterplanet.com)
-* [Brighter Planet's impact estimate web service](http://impact.brighterplanet.com)
-
-The killer combination:
-
-1. [`active_record_inline_schema`](https://github.com/seamusabshere/active_record_inline_schema) - define table structure
-2. [`remote_table`](https://github.com/seamusabshere/remote_table) - download data and parse it
-3. [`errata`](https://github.com/seamusabshere/errata) (this library!) - apply corrections in a transparent way
-4. [`data_miner`](https://github.com/seamusabshere/remote_table) - import data idempotently
-
 ## Inspiration
 
 There's a process for reporting errata on RFC:
@@ -226,6 +210,22 @@ The [`earth` library](https://github.com/brighterplanet/earth) has dozens of rea
     <td><a href="https://raw.github.com/brighterplanet/earth/master/errata/automobile_make_model_year_variant/feg_errata.csv">feg_errata.csv</a></td>
   </tr>
 </table>
+
+## Real-world usage
+
+<p><a href="http://brighterplanet.com"><img src="https://s3.amazonaws.com/static.brighterplanet.com/assets/logos/flush-left/inline/green/rasterized/brighter_planet-160-transparent.png" alt="Brighter Planet logo"/></a></p>
+
+We use `errata` for [data science at Brighter Planet](http://brighterplanet.com/research) and in production at
+
+* [Brighter Planet's reference data web service](http://data.brighterplanet.com)
+* [Brighter Planet's impact estimate web service](http://impact.brighterplanet.com)
+
+The killer combination:
+
+1. [`active_record_inline_schema`](https://github.com/seamusabshere/active_record_inline_schema) - define table structure
+2. [`remote_table`](https://github.com/seamusabshere/remote_table) - download data and parse it
+3. [`errata`](https://github.com/seamusabshere/errata) (this library!) - apply corrections in a transparent way
+4. [`data_miner`](https://github.com/seamusabshere/remote_table) - import data idempotently
 
 ## Authors
 
